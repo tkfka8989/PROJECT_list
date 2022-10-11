@@ -3,10 +3,10 @@
 all : server_exe client_exe
 CC=gcc
 
-server_exe : servermw.c
+server_exe : epollserver.c
   $(CC) -o $@ $<
   
-client_exe : clientmw.c
+client_exe : epollclient.c
   $(CC) -o $@ $<
   
 clean :
