@@ -1,25 +1,25 @@
 #include <SoftwareSerial.h>
 #include <DFPlayer_Mini_Mp3.h>
 #include <HCSR04.h>
-#include <NewPing.h> //NewPing ë¼ì´ë¸ŒëŸ¬ë¦¬
+#include <NewPing.h> //NewPing ¶óÀÌºê·¯¸®
 
-#define TRIGGER_CH1_PIN  8 //ì²«ë²ˆì§¸ Trigger pin
-#define ECHO_CH1_PIN     9 //ì²«ë²ˆì§¸ Echo pin
-#define MAX_DISTANCE 500   //ìµœëŒ€ ì¸¡ì • ê±°ë¦¬ ì„¤ì •
+#define TRIGGER_CH1_PIN  8 //Ã¹¹øÂ° Trigger pin
+#define ECHO_CH1_PIN     9 //Ã¹¹øÂ° Echo pin
+#define MAX_DISTANCE 500   //ÃÖ´ë ÃøÁ¤ °Å¸® ¼³Á¤
 
-//ì²«ë²ˆì§¸ NewPing ë¼ì´ë¸ŒëŸ¬ë¦¬ ìƒì„± (í•€(TRIG, ECHO)ê³¼ ìµœëŒ€ ê±°ë¦¬ ì„¤ì •)
+//Ã¹¹øÂ° NewPing ¶óÀÌºê·¯¸® »ı¼º (ÇÉ(TRIG, ECHO)°ú ÃÖ´ë °Å¸® ¼³Á¤)
 NewPing sonar_ch1(TRIGGER_CH1_PIN, ECHO_CH1_PIN, MAX_DISTANCE); 
 
-SoftwareSerial MP3Module(10,11);  //10ë²ˆ rX, 11ë²ˆ tX
-SoftwareSerial BTSerial(6,7);     // ì†Œí”„íŠ¸ì›¨ì–´ ì‹œë¦¬ì–¼ ê°ì²´ë¥¼ 6(TX),7ë²ˆ(RX) ìœ¼ë¡œ ìƒì„±
-SoftwareSerial mySerial(2,3);    // Serial í†µì‹ í•€ìœ¼ë¡œ D2ë²ˆí•€ì„ txë¡œ, D3ë²ˆí•€ì„ Rxë¡œ ì„ ì–¸
+SoftwareSerial MP3Module(10,11);  //10¹ø rX, 11¹ø tX
+SoftwareSerial BTSerial(6,7);     // ¼ÒÇÁÆ®¿ş¾î ½Ã¸®¾ó °´Ã¼¸¦ 6(TX),7¹ø(RX) À¸·Î »ı¼º
+SoftwareSerial mySerial(2,3);    // Serial Åë½ÅÇÉÀ¸·Î D2¹øÇÉÀ» tx·Î, D3¹øÇÉÀ» Rx·Î ¼±¾ğ
 
 
-int Radar_Signal_Read_Pin = 5;                    // Radar ëª¨ë“ˆ ì‹ í˜¸ì„ (3ë²ˆí•€)ê³¼ ì•„ë‘ì´ë…¸ì— ì—°ê²°ëœ í•€ë²ˆí˜¸
-int val = 0;                                      // Readí•œ Radar ëª¨ë“ˆ ì‹ í˜¸ì„ ì˜ ê°’ì„ ì €ì¥í•  ë³€ìˆ˜
+int Radar_Signal_Read_Pin = 5;                    // Radar ¸ğµâ ½ÅÈ£¼±(3¹øÇÉ)°ú ¾ÆµÎÀÌ³ë¿¡ ¿¬°áµÈ ÇÉ¹øÈ£
+int val = 0;                                      // ReadÇÑ Radar ¸ğµâ ½ÅÈ£¼±ÀÇ °ªÀ» ÀúÀåÇÒ º¯¼ö
 
 
-char buffer[20];               //í†µì‹ ì„ í• ë•Œ bufferë°°ì—´ì— ì „ì†¡ë°›ì€ ë°ì´í„° ì…ë ¥
+char buffer[20];               //Åë½ÅÀ» ÇÒ¶§ buffer¹è¿­¿¡ Àü¼Û¹ŞÀº µ¥ÀÌÅÍ ÀÔ·Â
 char bufferIndex = 0; 
 int n=0;
 int m = 0;
@@ -29,20 +29,20 @@ int b = 0;
 
 void setup()
 {
-  pinMode(Radar_Signal_Read_Pin, INPUT); // ë””ì§€í„¸ 5ë²ˆí•€ì„ GPIO INPUTìœ¼ë¡œ ì„¤ì •
-  Serial.begin(9600); // í†µì‹  ì†ë„ 9600bpsë¡œ PCì™€ ì‹œë¦¬ì–¼ í†µì‹  ì‹œì‘
-  mySerial.begin(9600); // í†µì‹  ì†ë„ 9600bpsë¡œ ëª¨ë“ˆê³¼ ì‹œë¦¬ì–¼ í†µì‹  ì‹œì‘
-  BTSerial.begin(9600);              // ì†Œí”„íŠ¸ì›¨ì–´ì‹œë¦¬ì–¼ í†µì‹  ê°œì‹œ, ì†ë„ëŠ” 9600
+  pinMode(Radar_Signal_Read_Pin, INPUT); // µğÁöÅĞ 5¹øÇÉÀ» GPIO INPUTÀ¸·Î ¼³Á¤
+  Serial.begin(9600); // Åë½Å ¼Óµµ 9600bps·Î PC¿Í ½Ã¸®¾ó Åë½Å ½ÃÀÛ
+  mySerial.begin(9600); // Åë½Å ¼Óµµ 9600bps·Î ¸ğµâ°ú ½Ã¸®¾ó Åë½Å ½ÃÀÛ
+  BTSerial.begin(9600);              // ¼ÒÇÁÆ®¿ş¾î½Ã¸®¾ó Åë½Å °³½Ã, ¼Óµµ´Â 9600
   MP3Module.begin(9600);
   mp3_set_serial (MP3Module);  //set softwareSerial for DFPlayer-mini mp3 module 
   delay(1);  //wait 1ms for mp3 module to set volume
   mp3_set_volume (30);  
   Serial.println("wait settings are in progress");
   delay(1000);
-  mySerial.write(0xAA); // compact mode ì‚¬ìš©
+  mySerial.write(0xAA); // compact mode »ç¿ë
   mySerial.write(0x37);
   delay(1000);
-  mySerial.write(0xAA); // ê·¸ë£¹1 ìŒì„± ëª…ë ¹ì–´ imported
+  mySerial.write(0xAA); // ±×·ì1 À½¼º ¸í·É¾î imported
   mySerial.write(0x21);
   Serial.println("The settings are complete");
   
@@ -52,15 +52,15 @@ void loop(){
 
     while(1){
       
-      Serial.println("ì¥ì• ë¬¼");
+      Serial.println("Àå¾Ö¹°");
       while(Serial.available()) {
-        buffer[bufferIndex] = Serial.read();   //ì‹œë¦¬ì–¼ í†µì‹ ìœ¼ë¡œ ë²„í¼ë°°ì—´ì— ë°ì´í„° ìˆ˜ì‹ 
-        bufferIndex++;     //ë°ì´í„° ìˆ˜ì‹  í›„ ë²„í¼ ì¸ë±ìŠ¤ 1 ì¦ê°€
+        buffer[bufferIndex] = Serial.read();   //½Ã¸®¾ó Åë½ÅÀ¸·Î ¹öÆÛ¹è¿­¿¡ µ¥ÀÌÅÍ ¼ö½Å
+        bufferIndex++;     //µ¥ÀÌÅÍ ¼ö½Å ÈÄ ¹öÆÛ ÀÎµ¦½º 1 Áõ°¡
       }         
-      int pos = atoi(buffer);                   //atoi()í•¨ìˆ˜ë¡œ charê°’ì„ intê°’ìœ¼ë¡œ ë³€í™˜
+      int pos = atoi(buffer);                   //atoi()ÇÔ¼ö·Î char°ªÀ» int°ªÀ¸·Î º¯È¯
       if(pos != 0) {
         Serial.print("Input data 1 : ");
-        Serial.println(pos);                    //intê°’ìœ¼ë¡œ ë³€í™˜ëœ ë°ì´í„° ì¶œë ¥
+        Serial.println(pos);                    //int°ªÀ¸·Î º¯È¯µÈ µ¥ÀÌÅÍ Ãâ·Â
         if (0<pos && pos <60){
           n++;
         }
@@ -76,13 +76,13 @@ void loop(){
       bufferIndex = 0;
    
       while(Serial.available()) {
-        buffer[bufferIndex] = Serial.read();   //ì‹œë¦¬ì–¼ í†µì‹ ìœ¼ë¡œ ë²„í¼ë°°ì—´ì— ë°ì´í„° ìˆ˜ì‹ 
-        bufferIndex++;     //ë°ì´í„° ìˆ˜ì‹  í›„ ë²„í¼ ì¸ë±ìŠ¤ 1 ì¦ê°€
+        buffer[bufferIndex] = Serial.read();   //½Ã¸®¾ó Åë½ÅÀ¸·Î ¹öÆÛ¹è¿­¿¡ µ¥ÀÌÅÍ ¼ö½Å
+        bufferIndex++;     //µ¥ÀÌÅÍ ¼ö½Å ÈÄ ¹öÆÛ ÀÎµ¦½º 1 Áõ°¡
       }         
-      pos = atoi(buffer);                   //atoi()í•¨ìˆ˜ë¡œ charê°’ì„ intê°’ìœ¼ë¡œ ë³€í™˜
+      pos = atoi(buffer);                   //atoi()ÇÔ¼ö·Î char°ªÀ» int°ªÀ¸·Î º¯È¯
       if(pos != 0) {
         Serial.print("Input data 2 : ");
-        Serial.println(pos);                    //intê°’ìœ¼ë¡œ ë³€í™˜ëœ ë°ì´í„° ì¶œë ¥
+        Serial.println(pos);                    //int°ªÀ¸·Î º¯È¯µÈ µ¥ÀÌÅÍ Ãâ·Â
         if(0< pos && pos<60){
           n++;
         }
@@ -132,16 +132,16 @@ void loop(){
       delay(1000);
       
       if(voice_recogn == 0x13){
-       Serial.println("ë¸”ë£¨íˆ¬ìŠ¤");
+       Serial.println("ºí·çÅõ½º");
        BTSerial.listen();
-       Serial.println("ìˆ˜ì§‘ì¤‘");
+       Serial.println("¼öÁıÁß");
        delay(3000);
        if (BTSerial.available()){
-        cmd =(char)BTSerial.read(); //cmdëŠ” ì‹œë¦¬ì–¼ì„ ì½ì€ ê°’(ë¬¸ì)dlrhê³ 
-        if(cmd == '1'){                 //cmdê°€ 1ì´ë©´(ë¬¸ìë‹ˆê¹Œ'1'ë¡œ í‘œí˜„)
+        cmd =(char)BTSerial.read(); //cmd´Â ½Ã¸®¾óÀ» ÀĞÀº °ª(¹®ÀÚ)dlrh°í
+        if(cmd == '1'){                 //cmd°¡ 1ÀÌ¸é(¹®ÀÚ´Ï±î'1'·Î Ç¥Çö)
           mp3_play (3);
           delay(17000);  
-        } else if (cmd =='0'){      //0ì´ë©´
+        } else if (cmd =='0'){      //0ÀÌ¸é
           mp3_play (4);
           delay(23000);
         }
